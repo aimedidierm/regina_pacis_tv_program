@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Tv;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class TvController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -21,8 +21,8 @@ class TvController extends Controller
      */
     public function create()
     {
-        $tv = Tv::where('id', Auth::guard('tv')->id())->first();
-        return view('tv.settings', ["data" => $tv]);
+        $admin = User::where('id', Auth::id())->first();
+        return view('admin.settings', ["data" => $admin]);
     }
 
     /**
@@ -36,7 +36,7 @@ class TvController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Tv $tv)
+    public function show(User $user)
     {
         //
     }
@@ -44,7 +44,7 @@ class TvController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Tv $tv)
+    public function edit(User $user)
     {
         //
     }
@@ -60,19 +60,19 @@ class TvController extends Controller
         ]);
 
         if ($request->password == $request->confirmPassword) {
-            $tv = Tv::where("id", Auth::guard('tv')->id())->first();
-            $tv->password = bcrypt($request->password);
-            $tv->update();
-            return redirect('/tv/settings');
+            $admin = User::where("id", Auth::id())->first();
+            $admin->password = bcrypt($request->password);
+            $admin->update();
+            return redirect('/admin/settings');
         } else {
-            return redirect("/tv/settings")->withErrors("Password not match");
+            return redirect("/admin/settings")->withErrors("Password not match");
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Tv $tv)
+    public function destroy(User $user)
     {
         //
     }

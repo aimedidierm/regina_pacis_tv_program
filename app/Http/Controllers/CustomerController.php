@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
@@ -20,7 +21,8 @@ class CustomerController extends Controller
      */
     public function create()
     {
-        //
+        $customer = Customer::where('id', Auth::guard('customer')->id())->first();
+        return view('customer.settings', ["data" => $customer]);
     }
 
     /**
@@ -71,9 +73,25 @@ class CustomerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Customer $customer)
+    public function update(Request $request)
     {
-        //
+        $request->validate([
+            "password" => "required",
+            "confirmPassword" => "required",
+            "address" => "required",
+            "phone" => "required"
+        ]);
+
+        if ($request->password == $request->confirmPassword) {
+            $customer = Customer::where("id", Auth::guard('customer')->id())->first();
+            $customer->phone = $request->phone;
+            $customer->address = $request->address;
+            $customer->password = bcrypt($request->password);
+            $customer->update();
+            return redirect('/customer/settings');
+        } else {
+            return redirect("/customer/settings")->withErrors("Password not match");
+        }
     }
 
     /**
