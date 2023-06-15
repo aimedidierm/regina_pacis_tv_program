@@ -50,6 +50,8 @@
         <input type="password" placeholder="Confirm password" name="confirmPassword"><br>
         <button type="submit">Add</button>
     </form>
+    <br>
+    <a href="/logout">Logout</a>
 </body>
 
 </html>
