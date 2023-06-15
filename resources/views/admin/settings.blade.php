@@ -9,6 +9,9 @@
 </head>
 
 <body>
+    <a href="/admin/tv">
+        <h4>Return to homepage</h4>
+    </a>
     <h1> You can update your details</h1>
     <form action="/admin/settings" method="post">
         @if($errors->any())

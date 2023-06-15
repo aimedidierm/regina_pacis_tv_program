@@ -28,6 +28,7 @@ Route::post('/register', [CustomerController::class, 'store']);
 Route::group(["prefix" => "admin", "middleware" => ["auth", "adminCheck"], "as" => "admin."], function () {
     Route::get('/settings', [UserController::class, 'create']);
     Route::put('/settings', [UserController::class, 'update']);
+    Route::resource('/tv', TvController::class)->only('index', 'store', 'destroy');
 });
 
 Route::group(["prefix" => "tv", "middleware" => ["auth:tv", "tvCheck"], "as" => "tv."], function () {

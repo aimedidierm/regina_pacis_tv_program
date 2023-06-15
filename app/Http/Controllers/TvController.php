@@ -13,7 +13,8 @@ class TvController extends Controller
      */
     public function index()
     {
-        //
+        $data = Tv::get();
+        return view('admin.tv', ["data" => $data]);
     }
 
     /**
@@ -30,7 +31,23 @@ class TvController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            "names" => "required",
+            "email" => "required|email",
+            "password" => "required",
+            "confirmPassword" => "required"
+        ]);
+
+        if ($request->password == $request->confirmPassword) {
+            $customer = new Tv;
+            $customer->names = $request->names;
+            $customer->email = $request->email;
+            $customer->password = bcrypt($request->password);
+            $customer->save();
+            return redirect('/admin/tv');
+        } else {
+            return redirect('/admin/tv')->withErrors('Passwords not match');
+        }
     }
 
     /**
@@ -74,6 +91,7 @@ class TvController extends Controller
      */
     public function destroy(Tv $tv)
     {
-        //
+        $tv->delete();
+        return redirect('/admin/tv');
     }
 }
