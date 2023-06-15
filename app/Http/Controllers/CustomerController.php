@@ -28,7 +28,28 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            "email" => "required|email",
+            "names" => "required",
+            "address" => "required",
+            "phone" => "required",
+            "password" => "required",
+            "confirmPassword" => "required"
+        ]);
+
+        if ($request->password == $request->confirmPassword) {
+            $customer = new Customer;
+            $customer->name = $request->names;
+            $customer->email = $request->email;
+            $customer->address = $request->address;
+            $customer->phone = $request->phone;
+            $customer->address = $request->address;
+            $customer->password = bcrypt($request->password);
+            $customer->save();
+            return redirect('/');
+        } else {
+            return redirect('/')->withErrors('Passwords not match');
+        }
     }
 
     /**
