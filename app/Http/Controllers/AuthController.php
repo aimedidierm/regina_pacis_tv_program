@@ -38,7 +38,7 @@ class AuthController extends Controller
             $passwordMatch = Hash::check($password, $tv->password);
             if ($passwordMatch) {
                 Auth::guard("tv")->login($tv);
-                return redirect("/tv/settings");
+                return redirect("/tv");
             } else {
                 return redirect("/")->withErrors(['msg' => 'Incorect password']);
             }
@@ -46,7 +46,7 @@ class AuthController extends Controller
             $passwordMatch = Hash::check($password, $customer->password);
             if ($passwordMatch) {
                 Auth::guard("customer")->login($customer);
-                return redirect("/customer/settings");
+                return redirect("/customer");
             } else {
                 return redirect("/")->withErrors(['msg' => 'Incorect password']);
             }
