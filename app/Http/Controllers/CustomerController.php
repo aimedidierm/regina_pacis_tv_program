@@ -51,7 +51,7 @@ class CustomerController extends Controller
             $customer->save();
             return redirect('/');
         } else {
-            return redirect('/')->withErrors('Passwords not match');
+            return redirect('/register')->withErrors('Passwords not match');
         }
     }
 
