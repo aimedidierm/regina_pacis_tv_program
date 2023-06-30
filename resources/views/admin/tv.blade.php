@@ -19,7 +19,7 @@
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
-                <button type="button" data-toggle="modal" style="box-shadow: none" class="btn btn-primary"
+                <button type="button" data-toggle="modal" style="box-shadow: none" class="btn btn-info"
                     data-target="#exampleModal">Add</button>
                 @if($errors->any())<span style="color: red;"> {{$errors->first()}}</span>
                 @endif
@@ -71,7 +71,7 @@
                 <hr>
                 <div class="card my-4">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                        <div class="bg-gradient-info shadow-info border-radius-lg pt-4 pb-3">
                             <h6 class="text-white text-capitalize ps-3">Tv account management table</h6>
                         </div>
                     </div>

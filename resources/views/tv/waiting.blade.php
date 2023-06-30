@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('content')
-<x-customer-nav />
+<x-tv-nav />
 <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur"
         data-scroll="true">
@@ -10,12 +10,12 @@
                 <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
                     <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a>
                     </li>
-                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Settings</li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Waiting</li>
                 </ol>
-                <h6 class="font-weight-bolder mb-0">Profile</h6>
+                <h6 class="font-weight-bolder mb-0">All</h6>
             </nav>
         </div>
     </nav>
+    <h1>All waiting applications</h1>
 </main>
 @stop
-<br>

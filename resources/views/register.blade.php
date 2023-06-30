@@ -11,11 +11,10 @@
     </title>
     <link rel="stylesheet" type="text/css"
         href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
-    <link href="/assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="/assets/css/nucleo-svg.css" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-    <link id="pagestyle" href="/assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <link id="pagestyle" href="/assets/css/dashboard.css" rel="stylesheet" />
     <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
 </head>
 
@@ -29,6 +28,7 @@
                             class="col-6 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 start-0 text-center justify-content-center flex-column">
                             <div class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center"
                                 style="background-image: url('/assets/img/signup.jpg'); background-size: cover;">
+                                <span class="mask  bg-gradient-info  opacity-6"></span>
                             </div>
                         </div>
                         <div class="col-xl-4 col-lg-5 col-md-7 d-flex flex-column ms-auto me-auto ms-lg-auto me-lg-5">
@@ -68,7 +68,7 @@
                                         </div>
                                         <div class="text-center">
                                             <button type="submit"
-                                                class="btn btn-lg bg-gradient-primary btn-lg w-100 mt-4 mb-0">Sign
+                                                class="btn btn-lg bg-gradient-info btn-lg w-100 mt-4 mb-0">Sign
                                                 Up</button>
                                         </div>
                                     </form>
@@ -76,7 +76,7 @@
                                 <div class="card-footer text-center pt-0 px-lg-2 px-1">
                                     <p class="mb-2 text-sm mx-auto">
                                         Already have an account?
-                                        <a href="/" class="text-primary text-gradient font-weight-bold">Sign in</a>
+                                        <a href="/" class="text-info text-gradient font-weight-bold">Sign in</a>
                                     </p>
                                 </div>
                             </div>

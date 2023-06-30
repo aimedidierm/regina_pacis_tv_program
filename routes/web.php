@@ -40,12 +40,16 @@ Route::group(["prefix" => "admin", "middleware" => ["auth", "adminCheck"], "as" 
 Route::group(["prefix" => "tv", "middleware" => ["auth:tv", "tvCheck"], "as" => "tv."], function () {
     Route::get('/', [DashboardController::class, 'tv']);
     Route::get('/customers', [CustomerController::class, 'index']);
-    Route::resource('/applications', ApplicationController::class)->only('index');
+    Route::resource('/applications', ApplicationController::class)->only('index', 'destroy');
+    Route::get('/applications/{application}', [ApplicationController::class, 'show']);
     Route::get('/settings', [TvController::class, 'create']);
     Route::put('/settings', [TvController::class, 'update']);
-    Route::resource('/categories', CategoryController::class)->only('index', 'store', 'destroy');
-    Route::resource('/subcategories', SubcategoryController::class)->only('index', 'store', 'destroy');
-    Route::resource('/prices', PriceController::class)->only('index', 'store', 'destroy');
+    Route::resource('/categories', CategoryController::class)->only('store', 'destroy');
+    Route::resource('/subcategories', SubcategoryController::class)->only('store', 'destroy');
+    Route::resource('/prices', PriceController::class)->only('store', 'destroy');
+    Route::get('/waiting', [ApplicationController::class, 'waiting']);
+    Route::get('/approved', [ApplicationController::class, 'approved']);
+    Route::get('/package', [CategoryController::class, 'index']);
 });
 
 Route::group(["prefix" => "customer", "middleware" => ["auth:customer", "customerCheck"], "as" => "customer."], function () {

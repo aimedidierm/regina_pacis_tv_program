@@ -13,7 +13,9 @@ class ApplicationController extends Controller
      */
     public function index()
     {
-        $application = Application::latest()->get();
+        $application = Application::latest()->where('status', 'pending')->get();
+        $application->load('customers', 'categories', 'subcategories');
+        // return $application;
         return view('tv.applications', ["data" => $application]);
     }
 
@@ -38,7 +40,9 @@ class ApplicationController extends Controller
      */
     public function show(Application $application)
     {
-        //
+        $application->load('customers', 'categories', 'subcategories');
+        // return $application;
+        return view('tv.details', ['data' => $application]);
     }
 
     /**
@@ -62,12 +66,14 @@ class ApplicationController extends Controller
      */
     public function destroy(Application $application)
     {
-        //
+
+        $application->delete();
+        return redirect('/tv/applications');
     }
 
     public function customerList()
     {
-        $applications = Application::latest()->where('customer_id', Auth::guard('customer'))->get();
+        $applications = Application::latest()->where('customer_id', Auth::guard('customer')->id())->get();
         return view('customer.application', ["data" => $applications]);
     }
 }

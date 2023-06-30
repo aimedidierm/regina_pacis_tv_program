@@ -9,4 +9,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class Customer extends Authenticatable
 {
     use HasFactory;
+
+    public function applications()
+    {
+        return $this->hasMany(Application::class, 'customer_id');
+    }
 }
