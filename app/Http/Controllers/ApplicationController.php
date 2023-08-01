@@ -3,8 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Application;
+use App\Models\Category;
+use App\Models\Subcategory;
+use Carbon\Carbon;
+use FFMpeg\FFMpeg;
+use FFMpeg\Coordinate\TimeCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ApplicationController extends Controller
 {
@@ -15,7 +21,6 @@ class ApplicationController extends Controller
     {
         $application = Application::latest()->where('status', 'pending')->get();
         $application->load('customers', 'categories', 'subcategories');
-        // return $application;
         return view('tv.applications', ["data" => $application]);
     }
 
@@ -32,7 +37,44 @@ class ApplicationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string',
+            'description' => 'required|string',
+            'category' => 'required|numeric',
+            'subcategory' => 'required|numeric',
+            'video' => 'required|file'
+        ]);
+        $subcategory = Subcategory::find($request->subcategory)->load('prices');
+        $selectedPrice = null;
+        foreach ($subcategory->prices as $price) {
+            if ($request->duration <= $price->time) {
+                $selectedPrice = $price;
+                break;
+            } else {
+                return back()->withErrors("Video duration is too large");
+            }
+        }
+
+        $uniqueid = uniqid();
+        $extension = $request->file('video')->getClientOriginalExtension();
+        $filename = Carbon::now()->format('Ymd') . '_' . $uniqueid . '.' . $extension;
+        $file = $request->file('video');
+        Storage::disk('public')->put($filename, file_get_contents($file));
+        $fileUrl = Storage::url($filename);
+
+        $application = new Application;
+        $application->title = $request->name;
+        $application->descrption = $request->description;
+        $application->video = $fileUrl;
+        $application->price = $selectedPrice['price'];
+        $application->customer_id = Auth::id();
+        $application->category_id = $request->category;
+        $application->subcategory_id = $request->subcategory;
+        $application->status = 'pending';
+        $application->created_at = now();
+        $application->updated_at = null;
+        $application->save();
+        return redirect('/customer/application');
     }
 
     /**
@@ -68,12 +110,40 @@ class ApplicationController extends Controller
     {
 
         $application->delete();
-        return redirect('/tv/applications');
+        return back();
     }
 
     public function customerList()
     {
+        $categories = Category::all()->load('subcategories');
         $applications = Application::latest()->where('customer_id', Auth::guard('customer')->id())->get();
-        return view('customer.application', ["data" => $applications]);
+        $applications->load('categories', 'subcategories');
+        return view('customer.application', ["data" => $applications, "categories" => $categories]);
+    }
+
+    public function payment()
+    {
+        $applications = Application::latest()->where('customer_id', Auth::guard('customer')->id())->where('status', 'approved')->get();
+        $applications->load('categories', 'subcategories');
+        return view('customer.payments', ["data" => $applications]);
+    }
+
+    public function approveApplication(Application $application)
+    {
+        $application->status = 'approved';
+        $application->update();
+        return redirect('/tv/applications');
+    }
+
+    public function waiting()
+    {
+        $applications = Application::where('status', 'approved')->get();
+        return view('tv.pendingPayment', ['data' => $applications]);
+    }
+
+    public function approved()
+    {
+        $applications = Application::where('status', 'payed')->get();
+        return view('tv.approved', ['data' => $applications]);
     }
 }

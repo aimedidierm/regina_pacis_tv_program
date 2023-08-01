@@ -15,66 +15,48 @@
                 <h6 class="font-weight-bolder mb-0">Apply</h6>
             </nav>
         </div>
+        @if($errors->any())<span style="color: red;"> {{$errors->first()}}</span>
+        @endif
     </nav>
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
-                <button type="button" data-toggle="modal" style="box-shadow: none" class="btn btn-info"
-                    data-target="#exampleModal">Submit application</button>
-                @if($errors->any())<span style="color: red;"> {{$errors->first()}}</span>
-                @endif
+
                 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
                     aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Create new application</h5>
+                                <h5 class="modal-title" id="exampleModalLabel">Make payment</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form action="/customer/application" method="POST" enctype="multipart/form-data"
-                                    id="videoForm">
+                                <form action="/customer/payments" method="POST" enctype="multipart/form-data">
                                     @csrf
+                                    <input type="hidden" name="application" id="application">
                                     <div class="form-group">
-                                        <label for="names">Title:</label>
-                                        <input type="text" class="form-control" name="name" placeholder="Enter names"
-                                            id="names" required>
+                                        <label for="name">Name:</label>
+                                        <input type="text" class="form-control" id="name" disabled>
                                     </div>
                                     <div class="form-group">
-                                        <label for="email">Description:</label>
-                                        <input type="text" class="form-control" name="description"
-                                            placeholder="Enter description" id="email" required>
+                                        <label for="price">Price:</label>
+                                        <input type="number" class="form-control" id="price" disabled>
                                     </div>
                                     <div class="form-group">
                                         <label for="category">Category:</label>
-                                        <select name="category" class="form-control" id="category">
-                                            <option value="0">Select a category</option>
-                                            @foreach ($categories as $category)
-                                            <option value="{{ $category->id }}">{{ $category->title }}</option>
-                                            @endforeach
-                                        </select>
+                                        <input type="text" class="form-control" id="category" disabled>
                                     </div>
-
                                     <div class="form-group">
-                                        <label for="subcategory">Subcategory:</label>
-                                        <select name="subcategory" class="form-control" id="subcategory">
-                                            <option value="0">Select a subcategory</option>
-                                        </select>
+                                        <label for="category">BIlling number:</label>
+                                        <input type="number" class="form-control" name="number" id="number" required>
                                     </div>
-
-
-                                    <div class="form-group">
-                                        <label for="videoInput">Video:</label>
-                                        <input type="file" name="video" id="videoInput">
-                                    </div>
-
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" style="box-shadow: none"
                                     data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary" style="box-shadow: none">Submit
+                                <button type="submit" class="btn btn-primary" style="box-shadow: none">Pay
                                 </button></form>
                             </div>
                         </div>
@@ -103,9 +85,6 @@
                                         <th
                                             class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             Video</th>
-                                        <th
-                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                            Status</th>
                                         <th class="text-secondary opacity-7"></th>
                                     </tr>
                                 </thead>
@@ -145,20 +124,10 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>
-                                            <div class="d-flex px-2 py-1">
-                                                <div>
-                                                    <h6 class="mb-0 text-sm">{{$item->status}}</h6>
-                                                </div>
-                                            </div>
-                                        </td>
                                         <td class="align-middle">
-                                            <form method="POST" action="/customer/application/{{ $item->id }}">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    style="border-radius: 8px;border: none;background-color: #f44336;color: white;padding: 10px 20px;">Delete</button>
-                                            </form>
+                                            <button type="button" data-toggle="modal" style="box-shadow: none"
+                                                class="btn btn-info" data-target="#exampleModal"
+                                                onclick="pay({{$item}})"> Pay</button>
                                         </td>
                                     </tr>
                                     @endforeach
@@ -171,69 +140,15 @@
         </div>
 </main>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const videoInput = document.getElementById('videoInput');
-    
-        videoInput.addEventListener('change', function() {
-            const videoFile = videoInput.files[0];
-            const videoURL = URL.createObjectURL(videoFile);
-            const videoElement = document.createElement('video');
-    
-            videoElement.addEventListener('loadedmetadata', function() {
-                // Duration is in seconds
-                const duration = videoElement.duration;
-    
-                // Add an input element to the form to send the duration along with the file
-                const durationInput = document.createElement('input');
-                durationInput.setAttribute('type', 'hidden');
-                durationInput.setAttribute('name', 'duration');
-                durationInput.setAttribute('value', duration);
-                document.getElementById('videoForm').appendChild(durationInput);
-    
-                // Revoke the URL object to free up resources
-                URL.revokeObjectURL(videoURL);
-            });
-    
-            videoElement.src = videoURL;
-        });
-    });
-</script>
-<script>
-    const categoryDropdown = document.getElementById("category");
-const subcategoryDropdown = document.getElementById("subcategory");
-let categoriesData;
-
-function populateSubcategories(selectedCategoryId) {
-    subcategoryDropdown.innerHTML = "";
-
-    if (selectedCategoryId === 0) {
-        subcategoryDropdown.innerHTML = '<option value="0">Select a subcategory</option>';
-        subcategoryDropdown.disabled = true;
-    } else {
-        const selectedCategory = categoriesData.find(category => category.id === selectedCategoryId);
-        if (selectedCategory) {
-            subcategoryDropdown.disabled = false;
-            if (selectedCategory.subcategories.length === 0) {
-                subcategoryDropdown.innerHTML = '<option value="0">No subcategories available</option>';
-            } else {
-                selectedCategory.subcategories.forEach(subcategory => {
-                    const option = document.createElement("option");
-                    option.value = subcategory.id;
-                    option.textContent = subcategory.title;
-                    subcategoryDropdown.appendChild(option);
-                });
-            }
-        }
+    function pay(item) {
+        var application = document.getElementById('application');
+        application.value = item.id;
+        var name = document.getElementById('name');
+        name.value = item.title;
+        var price = document.getElementById('price');
+        price.value = item.price;
+        var category = document.getElementById('category');
+        category.value = item.categories.title;
     }
-}
-
-categoryDropdown.addEventListener("change", () => {
-    const selectedCategoryId = parseInt(categoryDropdown.value);
-    populateSubcategories(selectedCategoryId);
-});
-document.addEventListener("DOMContentLoaded", () => {
-    categoriesData = @json($categories);
-});
-
 </script>
 @stop

@@ -45,7 +45,7 @@
                 <td>
                     <div class="embed-responsive embed-responsive-16by9">
                         <video class="embed-responsive-item" controls>
-                            <source src="/mikasi.mp4" type="video/mp4">
+                            <source src="{{$data->video}}" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
                     </div>
@@ -56,7 +56,7 @@
             </tr>
         </table>
     </div>
-    <a type="submit"
+    <a href="/tv/applications/approve/{{$data->id}}"
         style="border-radius: 8px;border: none;background-color: #44eb44;color: white;padding: 5px 10px;">Approve</a>
     <hr>
     <form method="POST" action="/tv/applications/{{$data->id}}">

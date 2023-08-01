@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Price;
+use App\Models\Subcategory;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -37,7 +39,7 @@ class CategoryController extends Controller
         $category->title = $request->title;
         $category->description = $request->description;
         $category->save();
-        return redirect('/tv/categories');
+        return redirect('/tv/package');
     }
 
     /**
@@ -70,6 +72,43 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         $category->delete();
-        return redirect('/tv/categories');
+        return redirect('/tv/package');
+    }
+
+    public function package()
+    {
+        $firstSubcategories = Subcategory::latest()->get();
+        $firstCategories = Category::latest()->get();
+        $firstPrices = Price::latest()->get();
+        $categories = Category::with('subcategories.prices')->latest()->get();
+
+        // Modify the data structure to nest subcategories and prices within categories
+        $categories = Category::with('subcategories.prices')->latest()->get();
+
+        // Modify the data structure to nest subcategories and prices within categories
+        $jsonData = $categories->map(function ($category) {
+            return [
+                'id' => $category->id,
+                'title' => $category->title,
+                'description' => $category->description,
+                'subcategories' => $category->subcategories->map(function ($subcategory) {
+                    return [
+                        'id' => $subcategory->id,
+                        'title' => $subcategory->title,
+                        'description' => $subcategory->description,
+                        'prices' => $subcategory->prices->map(function ($price) {
+                            return [
+                                'id' => $price->id,
+                                'title' => $price->title,
+                                'description' => $price->description,
+                                'time' => $price->time,
+                                'price' => $price->price,
+                            ];
+                        }),
+                    ];
+                }),
+            ];
+        });
+        return view('tv.package', ['subcategories' => $firstSubcategories, 'categories' => $firstCategories, 'prices' => $firstPrices, 'jsonData' => $jsonData]);
     }
 }

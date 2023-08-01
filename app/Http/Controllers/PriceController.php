@@ -28,7 +28,22 @@ class PriceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'subcategory' => 'required|numeric',
+            'time' => 'required|numeric',
+            'price' => 'required|numeric',
+            'title' => 'required|string',
+        ]);
+        $price = new Price;
+        $price->title = $request->title;
+        $price->descrption = $request->description;
+        $price->time = $request->time;
+        $price->price = $request->price;
+        $price->subcategory_id = $request->subcategory;
+        $price->created_at = now();
+        $price->updated_at = null;
+        $price->save();
+        return redirect('/tv/package');
     }
 
     /**
@@ -60,6 +75,7 @@ class PriceController extends Controller
      */
     public function destroy(Price $price)
     {
-        //
+        $price->delete();
+        return redirect('/tv/package');
     }
 }

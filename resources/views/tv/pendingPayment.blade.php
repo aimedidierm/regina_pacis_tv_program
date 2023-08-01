@@ -19,7 +19,7 @@
     <div class="card my-4">
         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-info shadow-info border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize ps-3">All Applications</h6>
+                <h6 class="text-white text-capitalize ps-3">All pending payments applications</h6>
             </div>
         </div>
         <div class="card-body px-0 pb-2">
@@ -74,14 +74,7 @@
                                 <div class="d-flex px-2 py-1">
                                     <a href="/tv/applications/{{$item->id}}"
                                         style="border-radius: 8px;border: none;background-color: #36bef4;color: white;padding: 5px 10px;">Details</a>
-                                    <a href="/tv/applications/approve/{{$item->id}}"
-                                        style="border-radius: 8px;border: none;background-color: #44eb44;color: white;padding: 5px 10px;">Approve</a>
-                                    <form method="POST" action="/tv/applications/{{$item->id}}">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            style="border-radius: 8px;border: none;background-color: #f44336;color: white;padding: 5px 10px;">Reject</button>
-                                    </form>
+
                                 </div>
                             </td>
                         </tr>

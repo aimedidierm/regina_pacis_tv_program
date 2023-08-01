@@ -44,7 +44,7 @@ class AuthController extends Controller
             $passwordMatch = Hash::check($password, $customer->password);
             if ($passwordMatch) {
                 Auth::guard("customer")->login($customer);
-                return redirect("/customer");
+                return redirect("/customer/application");
             } else {
                 return redirect("/")->withErrors(['msg' => 'Incorect password']);
             }

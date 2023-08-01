@@ -43,7 +43,7 @@ class SubcategoryController extends Controller
         $subcategory->description = $request->description;
         $subcategory->category_id = $request->category;
         $subcategory->save();
-        return redirect('/tv/subcategories');
+        return redirect('/tv/package');
     }
 
     /**
@@ -76,6 +76,6 @@ class SubcategoryController extends Controller
     public function destroy(Subcategory $subcategory)
     {
         $subcategory->delete();
-        return redirect('/tv/subcategories');
+        return redirect('/tv/package');
     }
 }

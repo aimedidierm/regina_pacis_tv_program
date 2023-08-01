@@ -19,8 +19,6 @@ return new class extends Migration
             $table->integer('price');
             $table->unsignedBigInteger('subcategory_id');
             $table->foreign('subcategory_id')->on('subcategories')->references('id')->onDelete("restrict");
-            $table->unsignedBigInteger('category_id');
-            $table->foreign('category_id')->on('categories')->references('id')->onDelete("restrict");
             $table->timestamps();
         });
     }

@@ -32,17 +32,17 @@
                 <div class="col-auto my-auto">
                     <div class="h-100">
                         <h5 class="mb-1">
-                            {{Auth::guard('customer')->user()->names}}
+                            {{Auth::guard('customer')->user()->name}}
                         </h5>
                         <p class="mb-0 font-weight-normal text-sm">
-                            Tv Account
+                            Customer Account
                         </p>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="row">
-                    <form action="/tv/settings" method="post">
+                    <form action="/customer/settings" method="post">
                         @if($errors->any())
                         <span style="color: red;">{{$errors->first()}}</span><br>
                         @endif

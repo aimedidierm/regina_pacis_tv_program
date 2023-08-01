@@ -17,8 +17,8 @@
     </nav>
     <h3 class="font-weight-bolder mb-0">Create new: </h3>
     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#categoryModal">Category</button>
-    <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#subcategoryModal">Subcategory</button>
-    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#priceModal">Price</button>
+    <button type="button" class="btn btn-dark">Subcategory</button>
+    <button type="button" class="btn btn-success">Price</button>
     <div class="modal fade" id="categoryModal" tabindex="-1" role="dialog" aria-labelledby="categoryModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -50,95 +50,141 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="subcategoryModal" tabindex="-1" role="dialog" aria-labelledby="subcategoryModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="subcategoryModalLabel">Add new subcategory</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form action="/tv/subcategories" method="post">
-                        @csrf
-                        <div class="form-group">
-                            <label>Category:</label>
-                            <select name="category" class="form-control">
-                                @foreach ($categories as $item)
-                                <option value="{{$item->id}}">{{$item->title}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Title:</label>
-                            <input type="text" name="title" class="form-control" placeholder="Enter category title">
-                        </div>
-                        <div class="form-group">
-                            <label for="description">Description:</label>
-                            <textarea type="text" name="descrption" class="form-control"
-                                placeholder="Enter category descrption"></textarea>
-                        </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Create</button>
-                    </form>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="priceModal" tabindex="-1" role="dialog" aria-labelledby="priceModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="priceModalLabel">Add new price</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form action="/tv/prices" method="post">
-                        @csrf
-                        <div class="form-group">
-                            <label>Subcategory:</label>
-                            <select name="subcategory" class="form-control">
-                                @foreach ($subcategories as $item)
-                                <option value="{{$item->id}}">{{$item->title}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Title:</label>
-                            <input type="text" name="title" class="form-control" placeholder="Enter category title">
-                        </div>
-                        <div class="form-group">
-                            <label>Time: (Seconds)</label>
-                            <input type="number" name="time" class="form-control" placeholder="Enter limit time">
-                        </div>
-                        <div class="form-group">
-                            <label>Price: (Rwf)</label>
-                            <input type="number" name="price" class="form-control" placeholder="Enter price">
-                        </div>
-                        <div class="form-group">
-                            <label for="description">Description:</label>
-                            <textarea type="text" name="descrption" class="form-control"
-                                placeholder="Enter category descrption"></textarea>
-                        </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Create</button>
-                    </form>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <h1>Manage categories</h1>
+    <table border="2px">
+        <tr>
+            <td>N</td>
+            <td>Title</td>
+            <td>Descrition</td>
+            <td>Action</td>
+        </tr>
+        @if ($categories->isEmpty())
+        <tr>
+            <td colspan="5">No data in table</td>
+        </tr>
+        @endif
+        @foreach ($categories as $item)
+        <tr>
+            <td>{{$item->id}}</td>
+            <td>{{$item->title}}</td>
+            <td>{{$item->description}}</td>
+            <td>
+                <form method="POST" action="/tv/categories/{{ $item->id }}">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        @endforeach
+    </table>
+
+    <h1>Add new category</h1>
+
+    <form action="/tv/categories" method="post">
+        @csrf
+        <input type="text" name="title" placeholder="Title">
+        <input type="text" name="description" placeholder="Descrption">
+        <button type="submit">Add</button>
+    </form>
+    <h1>Manage subcategories</h1>
+    <table border="2px">
+        <tr>
+            <td>N</td>
+            <td>Title</td>
+            <td>Category</td>
+            <td>Descrition</td>
+            <td>Action</td>
+        </tr>
+        @if ($subcategories->isEmpty())
+        <tr>
+            <td colspan="5">No data in table</td>
+        </tr>
+        @endif
+        @foreach ($subcategories as $item)
+        <tr>
+            <td>{{$item->id}}</td>
+            <td>{{$item->title}}</td>
+            <td>{{$item->categories->title}}</td>
+            <td>{{$item->description}}</td>
+            <td>
+                <form method="POST" action="/tv/subcategories/{{ $item->id }}">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        @endforeach
+    </table>
+
+    <h1>Add new subcategory</h1>
+
+    <form action="/tv/subcategories" method="post">
+        @csrf
+        <select name="category" id="">
+            @foreach ($categories as $item)
+            <option value="{{$item->id}}">{{$item->title}}</option>
+            @endforeach
+        </select>
+        <input type="text" name="title" placeholder="Title">
+        <input type="text" name="description" placeholder="Descrption">
+        <button type="submit">Add</button>
+    </form>
+
+    <h1>Prices management</h1>
+    <table border="2px">
+        <tr>
+            <td>N</td>
+            <td>Title</td>
+            <td>Time</td>
+            <td>Price</td>
+            <td>Subcategory</td>
+            <td>Action</td>
+        </tr>
+        @if ($subcategories->isEmpty())
+        <tr>
+            <td colspan="5">No data in table</td>
+        </tr>
+        @endif
+        @foreach ($prices as $item)
+        <tr>
+            <td>{{$item->id}}</td>
+            <td>{{$item->title}}</td>
+            <td>{{$item->time}}</td>
+            <td>{{$item->price}}</td>
+            <td>{{$item->subcategory_id}}</td>
+            <td></td>
+            <td>
+                <form method="POST" action="/tv/prices/{{ $item->id }}">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        @endforeach
+    </table>
+
+    <h1>Add new price</h1>
+    @if($errors->any())<span style="color: red;"> {{$errors->first()}}</span>
+    @endif
+    <form action="/tv/prices" method="post">
+        @csrf
+        <select name="subcategory" id="">
+            @foreach ($subcategories as $item)
+            <option value="{{$item->id}}">{{$item->title}}</option>
+            @endforeach
+        </select>
+        <input type="text" name="title" placeholder="Title">
+        <input type="text" name="description" placeholder="Descrption">
+        <input type="number" name="time" placeholder="Time">
+        <input type="number" name="price" placeholder="price">
+        <button type="submit">Add</button>
+    </form>
 
     <div class="container mt-4">
-        <h2>Package Table</h2>
+        <h2>Categories Table</h2>
         <input type="text" id="searchInput" placeholder="Search for categories...">
         <table class="table table-bordered table-hover mt-4">
             <thead>
