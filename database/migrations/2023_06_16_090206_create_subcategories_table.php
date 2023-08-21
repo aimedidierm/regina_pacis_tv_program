@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->on('categories')->references('id')->onDelete("restrict");
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

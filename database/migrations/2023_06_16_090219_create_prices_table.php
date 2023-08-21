@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('subcategory_id');
             $table->foreign('subcategory_id')->on('subcategories')->references('id')->onDelete("restrict");
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

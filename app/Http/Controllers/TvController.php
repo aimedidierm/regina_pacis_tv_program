@@ -33,7 +33,7 @@ class TvController extends Controller
     {
         $request->validate([
             "names" => "required",
-            "email" => "required|email",
+            "email" => ["required", "email", new \App\Rules\UniqueEmailAcrossTables],
             "password" => "required",
             "confirmPassword" => "required"
         ]);

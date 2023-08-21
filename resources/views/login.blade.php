@@ -37,12 +37,12 @@
                                 <form method="POST" action="/" class="text-start">
                                     @csrf
                                     <div class="input-group input-group-outline my-3">
-                                        <label class="form-label">Email</label>
-                                        <input type="email" name="email" class="form-control" required>
+                                        <input placeholder="Email" type="email" name="email" class="form-control"
+                                            required>
                                     </div>
                                     <div class="input-group input-group-outline mb-3">
-                                        <label class="form-label">Password</label>
-                                        <input type="password" name="password" class="form-control" required>
+                                        <input placeholder="Password" type="password" name="password"
+                                            class="form-control" required>
                                     </div>
                                     <br>
                                     <div class="text-center">

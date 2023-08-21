@@ -43,28 +43,27 @@
                                         @if($errors->any())<span style="color: red;"> {{$errors->first()}}</span>
                                         @endif
                                         <div class="input-group input-group-outline mb-3">
-                                            <label class="form-label">Name</label>
-                                            <input type="text" name="names" class="form-control" required>
+                                            <input placeholder="Name" type="text" name="names" class="form-control"
+                                                required>
                                         </div>
                                         <div class="input-group input-group-outline mb-3">
-                                            <label class="form-label">Telephone</label>
-                                            <input type="text" name="phone" class="form-control">
+                                            <input placeholder="Telephone" type="text" name="phone"
+                                                class="form-control">
                                         </div>
                                         <div class="input-group input-group-outline mb-3">
-                                            <label class="form-label">Address</label>
-                                            <input type="text" name="address" class="form-control">
+                                            <input placeholder="Address" type="text" name="address"
+                                                class="form-control">
                                         </div>
                                         <div class="input-group input-group-outline mb-3">
-                                            <label class="form-label">Email</label>
-                                            <input type="email" name="email" class="form-control">
+                                            <input placeholder="Email" type="email" name="email" class="form-control">
                                         </div>
                                         <div class="input-group input-group-outline mb-3">
-                                            <label class="form-label">Password</label>
-                                            <input type="password" name="password" class="form-control">
+                                            <input placeholder="Password" type="password" name="password"
+                                                class="form-control">
                                         </div>
                                         <div class="input-group input-group-outline mb-3">
-                                            <label class="form-label">Confirm password</label>
-                                            <input type="password" name="confirmPassword" class="form-control">
+                                            <input placeholder="Confirm password" type="password" name="confirmPassword"
+                                                class="form-control">
                                         </div>
                                         <div class="text-center">
                                             <button type="submit"

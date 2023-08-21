@@ -31,14 +31,19 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            "email" => "required|email",
-            "names" => "required",
-            "address" => "required",
-            "phone" => "required",
-            "password" => "required",
-            "confirmPassword" => "required"
-        ]);
+        $request->validate(
+            [
+                "email" => ["required", "email", new \App\Rules\UniqueEmailAcrossTables],
+                "names" => "required",
+                "address" => "required",
+                "password" => "required",
+                "confirmPassword" => "required",
+                "phone" => "required|numeric|regex:/^07\d{8}$/"
+            ],
+            $messages = [
+                "phone.regex" => "The phone number must start with '07' and be 10 digits long.",
+            ]
+        );
 
         if ($request->password == $request->confirmPassword) {
             $customer = new Customer;
@@ -76,12 +81,17 @@ class CustomerController extends Controller
      */
     public function update(Request $request)
     {
-        $request->validate([
-            "password" => "required",
-            "confirmPassword" => "required",
-            "address" => "required",
-            "phone" => "required"
-        ]);
+        $request->validate(
+            [
+                "password" => "required",
+                "confirmPassword" => "required",
+                "address" => "required",
+                "phone" => "required|numeric|regex:/^07\d{8}$/"
+            ],
+            $messages = [
+                "phone.regex" => "The phone number must start with '07' and be 10 digits long.",
+            ]
+        );
 
         if ($request->password == $request->confirmPassword) {
             $customer = Customer::where("id", Auth::guard('customer')->id())->first();

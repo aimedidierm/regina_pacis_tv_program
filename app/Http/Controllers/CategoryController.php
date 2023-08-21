@@ -81,11 +81,7 @@ class CategoryController extends Controller
         $firstCategories = Category::latest()->get();
         $firstPrices = Price::latest()->get();
         $categories = Category::with('subcategories.prices')->latest()->get();
-
-        // Modify the data structure to nest subcategories and prices within categories
         $categories = Category::with('subcategories.prices')->latest()->get();
-
-        // Modify the data structure to nest subcategories and prices within categories
         $jsonData = $categories->map(function ($category) {
             return [
                 'id' => $category->id,

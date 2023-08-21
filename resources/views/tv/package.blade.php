@@ -136,74 +136,102 @@
             </div>
         </div>
     </div>
-
     <div class="container mt-4">
         <h2>Package Table</h2>
         <input type="text" id="searchInput" placeholder="Search for categories...">
         <table class="table table-bordered table-hover mt-4">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Title</th>
                     <th>Description</th>
+                    <th>Price</th>
+                    <th>Time</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
             </tbody>
         </table>
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        const jsonData = {!! json_encode($jsonData) !!};
-        function populateTable() {
-          const tableBody = document.getElementById("tableBody");
-          tableBody.innerHTML = "";
-    
-          const searchInput = document.getElementById("searchInput").value.toLowerCase();
-    
-          jsonData.forEach(category => {
-            if (category.title.toLowerCase().includes(searchInput)) {
-              const categoryRow = `
-                <tr>
-                  <td>${category.id}</td>
-                  <td>${category.title}</td>
-                  <td>${category.description || ""}</td>
-                </tr>
-              `;
-              tableBody.insertAdjacentHTML("beforeend", categoryRow);
-              if (category.subcategories.length > 0) {
-                const subcategoryTable = `
-                  <tr>
-                    <td colspan="3">
-                      <table class="table table-bordered">
-                        <thead>
-                          <tr>
-                            <th>Time</th>
-                            <th>Price</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          ${category.subcategories[0].prices.map(price => {
-                            return `
-                              <tr>
-                                <td>${price.title}</td>
-                                <td>${price.price} Rwf</td>
-                              </tr>
-                            `;
-                          }).join('')}
-                        </tbody>
-                      </table>
+</main>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    const jsonData = {!! json_encode($jsonData) !!};
+    function populateTable() {
+        const tableBody = document.getElementById("tableBody");
+        tableBody.innerHTML = "";
+
+        const searchInput = document.getElementById("searchInput").value.toLowerCase();
+
+        jsonData.forEach(category => {
+            const categoryRow = `
+                <tr class="category-row">
+                    <td>${category.title}</td>
+                    <td colspan="3">${category.description || ""}</td>
+                    <td>
+                        <form method="POST" action="/tv/categories/${category.id}">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-danger" type="submit">Delete</button>
+                        </form>
                     </td>
-                  </tr>
+                </tr>
+            `;
+            tableBody.insertAdjacentHTML("beforeend", categoryRow);
+
+            category.subcategories.forEach(subcategory => {
+                const subcategoryRow = `
+                    <tr class="subcategory-row">
+                        <td>${subcategory.title}</td>
+                        <td colspan="3">${subcategory.description || ""}</td>
+                        <td>
+                            <form method="POST" action="/tv/categories/${subcategory.id}">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-danger" type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
                 `;
-    
-                tableBody.insertAdjacentHTML("beforeend", subcategoryTable);
-              }
-            }
-          });
-        }
-        populateTable();
-        document.getElementById("searchInput").addEventListener("input", populateTable);
-    </script>
-    @stop
+                tableBody.insertAdjacentHTML("beforeend", subcategoryRow);
+
+                subcategory.prices.forEach(price => {
+                    const priceRow = `
+                        <tr class="price-row">
+                            <td>${price.title}</td>
+                            <td>${price.description || ""}</td>
+                            <td>${price.price} Rwf</td>
+                            <td>${price.time} Seconds</td>
+                            <td>
+                                <form method="POST" action="/tv/prices/${price.id}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-danger" type="submit">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.insertAdjacentHTML("beforeend", priceRow);
+                });
+            });
+        });
+    }
+    populateTable();
+    document.getElementById("searchInput").addEventListener("input", populateTable);
+</script>
+<style>
+    .category-row {
+        background-color: #8fbeec;
+    }
+
+    .subcategory-row {
+        background-color: #202b1c;
+    }
+
+    .price-row {
+        background-color: #bbf8a8;
+    }
+</style>
+
+@stop
