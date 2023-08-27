@@ -18,11 +18,11 @@ return new class extends Migration
             $table->string('video');
             $table->float('price');
             $table->unsignedBigInteger('customer_id');
-            $table->foreign('customer_id')->on('customers')->references('id')->onDelete("restrict");
+            $table->foreign('customer_id')->on('customers')->references('id')->onDelete("CASCADE");
             $table->unsignedBigInteger('category_id');
-            $table->foreign('category_id')->on('categories')->references('id')->onDelete("restrict");
+            $table->foreign('category_id')->on('categories')->references('id')->onDelete("CASCADE");
             $table->unsignedBigInteger('subcategory_id');
-            $table->foreign('subcategory_id')->on('subcategories')->references('id')->onDelete("restrict");
+            $table->foreign('subcategory_id')->on('subcategories')->references('id')->onDelete("CASCADE");
             $table->enum('status', ['pending', 'approved', 'payed', 'expired']);
             $table->timestamps();
         });

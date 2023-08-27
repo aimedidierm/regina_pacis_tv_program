@@ -16,6 +16,7 @@
             </nav>
         </div>
     </nav>
+    <a href="/tv/report" class="btn btn-info">Generate report</a>
     <div class="card my-4">
         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-info shadow-info border-radius-lg pt-4 pb-3">

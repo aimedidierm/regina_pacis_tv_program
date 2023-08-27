@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('description')->nullable();
             $table->unsignedBigInteger('category_id');
-            $table->foreign('category_id')->on('categories')->references('id')->onDelete("restrict");
+            $table->foreign('category_id')->on('categories')->references('id')->onDelete("CASCADE");
             $table->timestamps();
             $table->softDeletes();
         });

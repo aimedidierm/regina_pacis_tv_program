@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Application;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Paypack\Paypack;
 
 class PaymentController extends Controller
 {
@@ -39,7 +41,12 @@ class PaymentController extends Controller
             ]
         );
 
-        //send payment request to mobile
+        $application = Application::find($request->application);
+
+        $paypackInstance = $this->paypackConfig()->Cashin([
+            "amount" => $application->price,
+            "phone" => $request->number,
+        ]);
 
         $ref = Str::random(6);
         $payment = new Payment;
@@ -47,6 +54,8 @@ class PaymentController extends Controller
         $payment->application_id = $request->application;
         $payment->ref = $ref;
         $payment->save();
+        $application->status = 'payed';
+        $application->update();
         return redirect('/customer/payments');
     }
 
@@ -80,5 +89,17 @@ class PaymentController extends Controller
     public function destroy(Payment $payment)
     {
         //
+    }
+
+    public function paypackConfig()
+    {
+        $paypack = new Paypack();
+
+        $paypack->config([
+            'client_id' => env('PAYPACK_CLIENT_ID'),
+            'client_secret' => env('PAYPACK_CLIENT_SECRET'),
+        ]);
+
+        return $paypack;
     }
 }

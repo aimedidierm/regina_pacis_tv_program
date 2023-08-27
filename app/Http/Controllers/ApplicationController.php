@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Application;
 use App\Models\Category;
 use App\Models\Subcategory;
+use App\Services\Sms;
 use Carbon\Carbon;
 use FFMpeg\FFMpeg;
 use FFMpeg\Coordinate\TimeCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ApplicationController extends Controller
 {
@@ -108,7 +110,17 @@ class ApplicationController extends Controller
      */
     public function destroy(Application $application)
     {
-
+        $application->load('customers');
+        $message = "Hello " . $application->customers->name . " your application at Regina pacis TV had been Rejected.";
+        $sms = new Sms();
+        $sms->recipients([$application->customers->phone])
+            ->message($message)
+            ->sender(env('SMS_SENDERID'))
+            ->username(env('SMS_USERNAME'))
+            ->password(env('SMS_PASSWORD'))
+            ->apiUrl("www.intouchsms.co.rw/api/sendsms/.json")
+            ->callBackUrl("");
+        $sms->send();
         $application->delete();
         return back();
     }
@@ -130,8 +142,19 @@ class ApplicationController extends Controller
 
     public function approveApplication(Application $application)
     {
+        $application->load('customers');
         $application->status = 'approved';
         $application->update();
+        $message = "Hello " . $application->customers->name . " your application at Regina pacis TV had been approved you can make payment thank you.";
+        $sms = new Sms();
+        $sms->recipients([$application->customers->phone])
+            ->message($message)
+            ->sender(env('SMS_SENDERID'))
+            ->username(env('SMS_USERNAME'))
+            ->password(env('SMS_PASSWORD'))
+            ->apiUrl("www.intouchsms.co.rw/api/sendsms/.json")
+            ->callBackUrl("");
+        $sms->send();
         return redirect('/tv/applications');
     }
 
@@ -145,5 +168,12 @@ class ApplicationController extends Controller
     {
         $applications = Application::where('status', 'payed')->get();
         return view('tv.approved', ['data' => $applications]);
+    }
+
+    public function report()
+    {
+        $data = Application::where('status', 'payed')->get();
+        $pdf = Pdf::loadView('tv.report', ['data' => $data]);
+        return $pdf->download('approvedList.pdf');
     }
 }

@@ -52,6 +52,7 @@ Route::group(["prefix" => "tv", "middleware" => ["auth:tv", "tvCheck"], "as" => 
     Route::get('/waiting', [ApplicationController::class, 'waiting']);
     Route::get('/approved', [ApplicationController::class, 'approved']);
     Route::get('/package', [CategoryController::class, 'package']);
+    Route::get('/report', [ApplicationController::class, 'report']);
 });
 
 Route::group(["prefix" => "customer", "middleware" => ["auth:customer", "customerCheck"], "as" => "customer."], function () {

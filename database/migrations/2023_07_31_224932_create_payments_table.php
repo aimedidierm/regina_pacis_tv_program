@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('ref')->unique();
             $table->enum('status', ['pending', 'payed'])->default('pending');
             $table->unsignedBigInteger('application_id');
-            $table->foreign('application_id')->on('applications')->references('id')->onDelete("restrict");
+            $table->foreign('application_id')->on('applications')->references('id')->onDelete("CASCADE");
             $table->timestamps();
         });
     }
