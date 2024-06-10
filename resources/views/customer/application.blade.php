@@ -2,7 +2,7 @@
 
 @section('content')
 <x-customer-nav />
-<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur"
         data-scroll="true">
         <div class="container-fluid py-1 px-3">
@@ -21,8 +21,7 @@
             <div class="col-12">
                 <button type="button" data-toggle="modal" style="box-shadow: none" class="btn btn-info"
                     data-target="#exampleModal">Submit application</button>
-                @if($errors->any())<span style="color: red;"> {{$errors->first()}}</span>
-                @endif
+                @if($errors->any())<span style="color: red;"> {{$errors->first()}}</span>@endif
                 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
                     aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
@@ -56,26 +55,26 @@
                                             @endforeach
                                         </select>
                                     </div>
-
                                     <div class="form-group">
                                         <label for="subcategory">Subcategory:</label>
-                                        <select name="subcategory" class="form-control" id="subcategory">
+                                        <select name="subcategory" class="form-control" id="subcategory" disabled>
                                             <option value="0">Select a subcategory</option>
                                         </select>
                                     </div>
-
-
+                                    <div class="form-group">
+                                        <label>Prices:</label>
+                                        <ul id="pricesList"></ul>
+                                    </div>
                                     <div class="form-group">
                                         <label for="videoInput">Video:</label>
-                                        <input type="file" name="video" id="videoInput">
+                                        <input type="file" name="video" id="videoInput" required>
                                     </div>
-
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" style="box-shadow: none"
                                     data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary" style="box-shadow: none">Submit
-                                </button></form>
+                                <button type="submit" class="btn btn-primary" style="box-shadow: none">Submit</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -172,68 +171,89 @@
 </main>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const videoInput = document.getElementById('videoInput');
-    
-        videoInput.addEventListener('change', function() {
-            const videoFile = videoInput.files[0];
-            const videoURL = URL.createObjectURL(videoFile);
-            const videoElement = document.createElement('video');
-    
-            videoElement.addEventListener('loadedmetadata', function() {
-                // Duration is in seconds
-                const duration = videoElement.duration;
-    
-                // Add an input element to the form to send the duration along with the file
-                const durationInput = document.createElement('input');
-                durationInput.setAttribute('type', 'hidden');
-                durationInput.setAttribute('name', 'duration');
-                durationInput.setAttribute('value', duration);
-                document.getElementById('videoForm').appendChild(durationInput);
-    
-                // Revoke the URL object to free up resources
-                URL.revokeObjectURL(videoURL);
-            });
-    
-            videoElement.src = videoURL;
-        });
-    });
-</script>
-<script>
+    const videoInput = document.getElementById('videoInput');
     const categoryDropdown = document.getElementById("category");
-const subcategoryDropdown = document.getElementById("subcategory");
-let categoriesData;
-
-function populateSubcategories(selectedCategoryId) {
-    subcategoryDropdown.innerHTML = "";
-
+    const subcategoryDropdown = document.getElementById("subcategory");
+    const pricesList = document.getElementById("pricesList");
+    let categoriesData = @json($categories);
+    
+    videoInput.addEventListener('change', function() {
+    const videoFile = videoInput.files[0];
+    const videoURL = URL.createObjectURL(videoFile);
+    const videoElement = document.createElement('video');
+    
+    videoElement.addEventListener('loadedmetadata', function() {
+    const duration = videoElement.duration;
+    
+    const durationInput = document.createElement('input');
+    durationInput.setAttribute('type', 'hidden');
+    durationInput.setAttribute('name', 'duration');
+    durationInput.setAttribute('value', duration);
+    document.getElementById('videoForm').appendChild(durationInput);
+    
+    updateTotalPrice(duration);
+    URL.revokeObjectURL(videoURL);
+    });
+    
+    videoElement.src = videoURL;
+    });
+    
+    function populateSubcategories(selectedCategoryId) {
+    subcategoryDropdown.innerHTML = '<option value="0">Select a subcategory</option>';
     if (selectedCategoryId === 0) {
-        subcategoryDropdown.innerHTML = '<option value="0">Select a subcategory</option>';
-        subcategoryDropdown.disabled = true;
+    subcategoryDropdown.disabled = true;
     } else {
-        const selectedCategory = categoriesData.find(category => category.id === selectedCategoryId);
-        if (selectedCategory) {
-            subcategoryDropdown.disabled = false;
-            if (selectedCategory.subcategories.length === 0) {
-                subcategoryDropdown.innerHTML = '<option value="0">No subcategories available</option>';
-            } else {
-                selectedCategory.subcategories.forEach(subcategory => {
-                    const option = document.createElement("option");
-                    option.value = subcategory.id;
-                    option.textContent = subcategory.title;
-                    subcategoryDropdown.appendChild(option);
-                });
-            }
-        }
+    const selectedCategory = categoriesData.find(category => category.id == selectedCategoryId);
+    if (selectedCategory && selectedCategory.subcategories.length > 0) {
+    subcategoryDropdown.disabled = false;
+    selectedCategory.subcategories.forEach(subcategory => {
+    const option = document.createElement("option");
+    option.value = subcategory.id;
+    option.textContent = subcategory.title;
+    subcategoryDropdown.appendChild(option);
+    });
+    } else {
+    subcategoryDropdown.disabled = true;
     }
-}
-
-categoryDropdown.addEventListener("change", () => {
-    const selectedCategoryId = parseInt(categoryDropdown.value);
-    populateSubcategories(selectedCategoryId);
-});
-document.addEventListener("DOMContentLoaded", () => {
-    categoriesData = @json($categories);
-});
-
+    }
+    }
+    
+    function populatePrices(subcategoryId) {
+    pricesList.innerHTML = "";
+    if (subcategoryId !== 0) {
+    const selectedSubcategory = categoriesData.flatMap(category => category.subcategories)
+    .find(subcategory => subcategory.id == subcategoryId);
+    if (selectedSubcategory && selectedSubcategory.prices.length > 0) {
+    selectedSubcategory.prices.forEach(price => {
+    const listItem = document.createElement("li");
+    listItem.textContent = `Up to ${price.time} seconds: $${price.price}`;
+    pricesList.appendChild(listItem);
+    });
+    }
+    }
+    }
+    
+    function updateTotalPrice(duration) {
+    const selectedSubcategoryId = parseInt(subcategoryDropdown.value);
+    const selectedSubcategory = categoriesData.flatMap(category => category.subcategories)
+    .find(subcategory => subcategory.id == selectedSubcategoryId);
+    
+    if (selectedSubcategory && selectedSubcategory.prices.length > 0) {
+    const totalPrice = selectedSubcategory.prices.find(price => duration <= price.time).price;
+        document.getElementById("totalPrice").textContent=`${totalPrice} Rwf`; } } categoryDropdown.addEventListener("change",
+        ()=> {
+        const selectedCategoryId = parseInt(categoryDropdown.value);
+        populateSubcategories(selectedCategoryId);
+        });
+    
+        subcategoryDropdown.addEventListener("change", () => {
+        const selectedSubcategoryId = parseInt(subcategoryDropdown.value);
+        populatePrices(selectedSubcategoryId);
+        const duration = parseFloat(document.getElementById('duration').value);
+        updateTotalPrice(duration);
+        });
+    
+        console.log('Categories Data Loaded:', categoriesData);
+        });
 </script>
 @stop

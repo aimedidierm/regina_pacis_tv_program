@@ -90,22 +90,6 @@ class ApplicationController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Application $application)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Application $application)
-    {
-        //
-    }
-
-    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Application $application)
@@ -127,7 +111,7 @@ class ApplicationController extends Controller
 
     public function customerList()
     {
-        $categories = Category::all()->load('subcategories');
+        $categories = Category::all()->load('subcategories.prices');
         $applications = Application::latest()->where('customer_id', Auth::guard('customer')->id())->get();
         $applications->load('categories', 'subcategories');
         return view('customer.application', ["data" => $applications, "categories" => $categories]);
