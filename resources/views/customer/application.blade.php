@@ -226,7 +226,7 @@
     if (selectedSubcategory && selectedSubcategory.prices.length > 0) {
     selectedSubcategory.prices.forEach(price => {
     const listItem = document.createElement("li");
-    listItem.textContent = `Up to ${price.time} seconds: $${price.price}`;
+    listItem.textContent = `Up to ${price.time} seconds: ${price.price} Rwf`;
     pricesList.appendChild(listItem);
     });
     }
