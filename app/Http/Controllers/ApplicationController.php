@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Aimedidierm\FdiSms\SendSms;
 use App\Models\Application;
 use App\Models\Category;
 use App\Models\Subcategory;
-use App\Services\Sms;
 use Carbon\Carbon;
-use FFMpeg\FFMpeg;
-use FFMpeg\Coordinate\TimeCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Str;
 
 class ApplicationController extends Controller
 {
@@ -96,16 +95,24 @@ class ApplicationController extends Controller
     {
         $application->load('customers');
         $message = "Hello " . $application->customers->name . " your application at Regina pacis TV had been Rejected.";
-        $sms = new Sms();
-        $sms->recipients([$application->customers->phone])
-            ->message($message)
-            ->sender(env('SMS_SENDERID'))
-            ->username(env('SMS_USERNAME'))
-            ->password(env('SMS_PASSWORD'))
-            ->apiUrl("www.intouchsms.co.rw/api/sendsms/.json")
-            ->callBackUrl("");
-        $sms->send();
+
+        $to = $application->customers->phone;
+        $senderId = "FDI";
+        $ref = Str::random(30);
+        $callbackUrl = "";
+
+        try {
+            $apiUsername = env('SMS_USERNAME');
+            $apiPassword = env('SMS_PASSWORD');
+            $smsSender = new SendSms($apiUsername, $apiPassword);
+
+            $smsSender->sendSms($to, $message, $senderId, $ref, $callbackUrl);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+
         $application->delete();
+
         return back();
     }
 
@@ -130,15 +137,22 @@ class ApplicationController extends Controller
         $application->status = 'approved';
         $application->update();
         $message = "Hello " . $application->customers->name . " your application at Regina pacis TV had been approved you can make payment thank you.";
-        $sms = new Sms();
-        $sms->recipients([$application->customers->phone])
-            ->message($message)
-            ->sender(env('SMS_SENDERID'))
-            ->username(env('SMS_USERNAME'))
-            ->password(env('SMS_PASSWORD'))
-            ->apiUrl("www.intouchsms.co.rw/api/sendsms/.json")
-            ->callBackUrl("");
-        $sms->send();
+
+        $to = $application->customers->phone;
+        $senderId = "FDI";
+        $ref = Str::random(30);
+        $callbackUrl = "";
+
+        try {
+            $apiUsername = env('SMS_USERNAME');
+            $apiPassword = env('SMS_PASSWORD');
+            $smsSender = new SendSms($apiUsername, $apiPassword);
+
+            $smsSender->sendSms($to, $message, $senderId, $ref, $callbackUrl);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+
         return redirect('/tv/applications');
     }
 
